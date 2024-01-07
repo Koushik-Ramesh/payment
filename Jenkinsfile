@@ -2,4 +2,5 @@
 
 
 env.Component="payment"
+env.APPTYPE="nodejs"
 python()
