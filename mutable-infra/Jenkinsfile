@@ -1,0 +1,38 @@
+@Library('roboshop-shared-library@main') _
+
+env.REPONAME="payment"
+env.TFDIR="mutable-infra"
+backendInfra()
+
+
+// pipeline {
+//     agent any
+//     options {
+//         ansiColor('xterm')
+//     }
+//     parameters {
+//         choice(name: 'ENV', choices: ['dev', 'prod'], description: 'Select your Environment')
+//         choice(name: 'ACTION', choices: ['apply', 'destroy'], description: 'Select your Action')
+//     }
+//     stages {
+//         stage('Terraform init') {
+//             steps {
+//                 sh "cd mutable-infra"
+//                 sh "terrafile -f env-${ENV}/Terrafile"
+//                 sh "terraform init -backend-config=env-${ENV}/${ENV}-backend.tfvars"
+//             }
+//         }
+//         stage('Terraform Plan') {
+//             steps {
+//                 sh "cd mutable-infra"
+//                 sh "terraform plan -var-file=env-${ENV}/${ENV}.tfvars"
+//             }
+//         }
+//         stage('Terraform Action') {
+//             steps {
+//                 sh "cd mutable-infra"
+//                 sh "terraform ${ACTION} -auto-approve -var-file=env-${ENV}/${ENV}.tfvars"
+//             }
+//         }
+//     }
+// }
