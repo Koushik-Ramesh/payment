@@ -1,0 +1,80 @@
+# Creates payment Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+  labels:
+    app: payment
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable : 20
+  selector:
+    matchLabels:
+      app: payment
+  template:
+    metadata:
+      labels:
+        app: payment
+    spec:
+      containers:
+      - name: payment
+        image: 751732450123.dkr.ecr.us-east-1.amazonaws.com/payment:502
+        ports:
+        - containerPort: 8080
+        envFrom:
+          - configMapRef:
+              name: payment-configmap
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "300Mi"
+            cpu: "200m"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payment-configmap
+data:
+  CART_ENDPOINT: cart-svc
+  DB_HOST: "roboshop-dev-mysql.cni2x2uz4mfb.us-east-1.rds.amazonaws.com"
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-svc
+spec:
+  selector:
+    app: payment
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+
+---
+# AutoScaling
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: payment-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment   # This could be any scalable workload
+    name: payment
+  minReplicas: 1     # Minimum number of replicas
+  maxReplicas: 10     # Maximum number of replicas
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 75   # Target average CPU utilization percentage
+
