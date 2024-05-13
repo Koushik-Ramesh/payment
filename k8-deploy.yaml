@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: payment
-        image: 751732450123.dkr.ecr.us-east-1.amazonaws.com/payment:502
+        image: 751732450123.dkr.ecr.us-east-1.amazonaws.com/payment:500
         ports:
         - containerPort: 8080
         envFrom:
@@ -41,8 +41,12 @@ kind: ConfigMap
 metadata:
   name: payment-configmap
 data:
-  CART_ENDPOINT: cart-svc
-  DB_HOST: "roboshop-dev-mysql.cni2x2uz4mfb.us-east-1.rds.amazonaws.com"
+  CART_HOST: cart-svc
+  USER_HOST: user-svc
+  AMQP_HOST: rabbitmq-dev.robosop.internal
+  AMQP_USER: roboshop 
+  AMQP_PASS: roboshop123
+
 ---
 
 apiVersion: v1
